@@ -83,10 +83,15 @@
                     event.target.style.color = "orange";
                     // reset the color after a short delay
                     // setTimeout(function () {
-                    event.target.style.color = "";
+                    //event.target.style.color = "";
                     //     footerElement.style.display = 'none';
                     // }, 500);
                 }, false);
+
+                elem.addEventListener('mouseout', function(e) {
+                     e.target.style.color = "";
+                     footerElement.style.display = 'none';
+                });
             });
 
         });

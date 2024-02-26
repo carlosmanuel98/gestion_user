@@ -63,7 +63,7 @@ class ChartController extends Controller
                     );
 
                     $clear_series[] = [
-                        'title' => '<span class=""> - Estimación</span>',
+                        // 'title' => '<span class=""> - Estimación</span>',
                         'start' => $v->start_at,
                         'end' => $v->deadline_at,
                         'content' => $v->issues->pluck('total_hours')->first() . ',00 hs'
