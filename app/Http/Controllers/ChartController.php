@@ -27,15 +27,17 @@ class ChartController extends Controller
 
         $dataRaw = [];
 
-        $data = Projects::orderBy('id', 'DESC')
+        $data = Projects::orderBy('id', 'ASC')
             ->has('reports')#solo ti hay reportes
-            ->with(['series',
+            ->with(['series', 'reports',
             'series.issues' => function ($query) {
                 $query->selectRaw('*, SUM(hours) as total_hours')
                     ->groupBy('report_id');
                 }
             ])
             ->get();
+            // dd($data);
+
         if ($data->isEmpty()) {
             // Redirige de vuelta al controlador principal con un mensaje de error
             return back()->withErrors(['No hay datos disponibles']);
@@ -48,7 +50,6 @@ class ChartController extends Controller
             foreach ($datum->series as $v) {
                 // dd($v->issues->pluck('id')->first());
                 // dd($v->description);
-
         //   dd($v->issues->pluck('total_hours')->first());
                 $calc = $v->get_calc($v->id);
                 if ($calc['start'] && $calc['end']) {
@@ -70,7 +71,7 @@ class ChartController extends Controller
 
 
                     $dataRaw[] = array(
-                        'id' => $v->issues->pluck('id')->first(), #ID DE LA TAREA/REPORTE
+                        'id' => $datum->reports->pluck('id')->first(), #ID DE LA TAREA/REPORTE
                         // 'id' => $datum['id'],
                         'name' => $datum['title'],
                         'series' => $clear_series
