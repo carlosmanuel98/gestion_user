@@ -20,4 +20,9 @@ class Projects extends Model
     {
         return $this->hasMany('App\Tags', 'projects_id', 'id');
     }
+
+    public function reports()
+    {
+        return $this->hasMany('App\Reports', 'projects_id', 'id')->withoutTrashed();
+    }
 }

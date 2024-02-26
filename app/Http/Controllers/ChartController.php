@@ -28,38 +28,65 @@ class ChartController extends Controller
         $dataRaw = [];
 
         $data = Projects::orderBy('id', 'DESC')
-            ->with(['series'])
+            ->has('reports')#solo ti hay reportes
+            ->with(['series',
+            'series.issues' => function ($query) {
+                $query->selectRaw('*, SUM(hours) as total_hours')
+                    ->groupBy('report_id');
+                }
+            ])
             ->get();
+        if ($data->isEmpty()) {
+            // Redirige de vuelta al controlador principal con un mensaje de error
+            return back()->withErrors(['No hay datos disponibles']);
+        }    
 
         foreach ($data as $datum) {
             $clear_series = [];
+        // dd($datum);
+            
             foreach ($datum->series as $v) {
+                // dd($v->issues->pluck('id')->first());
+                // dd($v->description);
 
+        //   dd($v->issues->pluck('total_hours')->first());
                 $calc = $v->get_calc($v->id);
                 if ($calc['start'] && $calc['end']) {
                     $clear_series[] = array_merge(
                         [
                             'color' => $v->color,
                             'title' => "<span><canvas class='pointer-color' style='background-color:" . $v->color . "'></canvas>  " . $v->name . "</span>",
-                            'content' => $v->content
+                            'content' => $v->issues->pluck('total_hours')->first() . 'hs'
                         ],
                         $calc
                     );
 
                     $clear_series[] = [
-                        'title' => '<span class="text-white"><i class="fas fa-clock"></i> Estimación</span>',
+                        'title' => '<span class=""> - Estimación</span>',
                         'start' => $v->start_at,
                         'end' => $v->deadline_at,
-                        'content' => $v->content
+                        'content' => $v->issues->pluck('total_hours')->first() . ',00 hs'
                     ];
+
+
+                    $dataRaw[] = array(
+                        'id' => $v->issues->pluck('id')->first(), #ID DE LA TAREA/REPORTE
+                        // 'id' => $datum['id'],
+                        'name' => $datum['title'],
+                        'series' => $clear_series
+                    );
                 }
             }
+            // dd($dataRaw);
+            // $dataRaw[] = array(
+            //     'id' => $reportId,#ID DE LA TAREA/REPORTE
+            //     // 'id' => $datum['id'],
+            //     'name' => $datum['title'],
+            //     'series' => $clear_series
+            // );
 
-            $dataRaw[] = array(
-                'id' => $datum['id'],
-                'name' => $datum['title'],
-                'series' => $clear_series
-            );
+
+            // dd($reportId);
         }
 
         return view($this->parent . '.view')->with(['data' => $dataRaw]);

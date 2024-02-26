@@ -13,7 +13,7 @@ class Issues extends Model
 
     public function issue_features()
     {
-        return $this->hasMany('App\IssuesHasFeatures', 'issue_id', 'id')->with(['detail']);
+        return $this->hasMany('App\IssuesHasFeatures', 'issue_id', 'id')->with(['detail'])->withoutTrashed();
     }
 
     public function get_tag()

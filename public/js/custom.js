@@ -51,7 +51,7 @@ $(function () {
             'default-range': 'Please select a date range between %d and %d days',
             'default-default': 'This is costom language'
         };
-
+if ($('#date-range0').length) {
     $('#date-range0').dateRangePicker(
         {}).on('datepicker-first-date-selected', function (event, obj) {
         /* This event will be triggered when first date is selected */
@@ -92,6 +92,7 @@ $(function () {
             /* This event will be triggered after date range picker open animation */
             console.log('after open');
         });
+    }
 
     /**
      * Listener hover

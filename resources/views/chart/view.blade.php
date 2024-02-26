@@ -54,7 +54,6 @@
 
         document.addEventListener("DOMContentLoaded", function (event) {
 
-
             jQuery("#ganttChart").ganttView({
                 data: @json($data),
                 slideWidth: '100%',
@@ -74,7 +73,7 @@
             const elementHover = document.querySelectorAll('.ganttview-vtheader-series-name');
 
             elementHover.forEach(function (elem) {
-
+                console.log(elem);
                 elem.addEventListener("mouseover", function (event) {
                     // highlight the mouseover target
                     if (elem.dataset.content) {

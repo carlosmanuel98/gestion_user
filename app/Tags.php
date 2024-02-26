@@ -26,12 +26,12 @@ class Tags extends Model
 
     public function issues()
     {
-        $this->hasMany('App\Issues', 'tag_id', 'id');
+        return $this->hasMany('App\Issues', 'tag_id', 'id')->withoutTrashed();
     }
 
     public function get_calc($arg)
     {
-        $query = Issues::where('tag_id', $arg);
+        $query = Issues::where('tag_id', $arg)->withoutTrashed();
         return [
             'start' => $query->orderBy('start', 'ASC')->pluck('start')->first(),
             'end' => $query->orderBy('end', 'DESC')->pluck('end')->last(),
